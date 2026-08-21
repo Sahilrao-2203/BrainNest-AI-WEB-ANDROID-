@@ -1,0 +1,57 @@
+﻿# Ignore everything in the root Desktop folder
+/*
+!/.gitignore
+!/BrainNest/
+!/Hackathon/
+
+# -------------------------------------------------------------
+# Project-specific ignores (BrainNest & Hackathon)
+# -------------------------------------------------------------
+
+# Flutter / Dart / Pub related (BrainNest)
+**/BrainNest/.dart_tool/
+**/BrainNest/.flutter-plugins
+**/BrainNest/.flutter-plugins-dependencies
+**/BrainNest/.pub-cache/
+**/BrainNest/.pub/
+**/BrainNest/build/
+**/BrainNest/android/app/debug/
+**/BrainNest/android/app/profile/
+**/BrainNest/android/app/release/
+**/BrainNest/*.iml
+**/BrainNest/.idea/
+
+# Node / Vite / TS related (Hackathon)
+**/Hackathon/node_modules/
+**/Hackathon/dist/
+**/Hackathon/dist-ssr/
+**/Hackathon/.eslintcache
+**/Hackathon/scratch/
+
+# Sensitive files / Secrets / Credentials
+**/.env
+**/.env.*
+!**/.env.example
+**/credentials*.json
+**/*.pem
+**/*.key
+**/*.pkcs12
+**/*.pfx
+**/*.p12
+
+# OS & IDE directories
+**/.DS_Store
+**/.vscode/
+!**/.vscode/extensions.json
+**/.idea/
+**/*.suo
+**/*.ntvs*
+**/*.njsproj
+**/*.sln
+**/*.sw?
+**/*.class
+**/*.log
+**/*.pyc
+**/*.swp
+**/.buildlog/
+**/.history
