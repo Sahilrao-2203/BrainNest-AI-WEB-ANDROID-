@@ -69,9 +69,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[110] flex items-center justify-center p-4">
-      <div className="bg-surface-container rounded-2xl w-full max-w-md border border-white/10 shadow-2xl overflow-hidden transform transition-all">
+      <div className="bg-surface-container rounded-2xl w-full max-w-md border border-white/10 shadow-2xl overflow-hidden transform transition-all max-h-[calc(100vh-2rem)] flex flex-col">
         {/* Modal Header */}
-        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-surface-container-high/50">
+        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-surface-container-high/50 shrink-0">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-xl">lock</span>
             <h3 className="font-headline-md text-headline-md text-on-surface">
@@ -88,7 +88,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
           {error && (
             <div className="p-3 bg-error-container/40 border border-error/30 text-error rounded-lg text-xs font-semibold">
               {error}

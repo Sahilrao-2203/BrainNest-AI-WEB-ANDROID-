@@ -11,12 +11,15 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({ className = '', ..
     setShowPassword((prev) => !prev);
   };
 
+  const defaultClasses = "bg-surface-variant border border-white/10 rounded-lg pl-4 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-body-md";
+  const inputClassName = className ? `${className} w-full pr-11` : `w-full pr-11 ${defaultClasses}`;
+
   return (
     <div className="relative flex items-center w-full">
       <input
         {...props}
         type={showPassword ? 'text' : 'password'}
-        className={`w-full bg-surface-variant border border-white/10 rounded-lg pl-4 pr-11 py-2.5 text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-body-md ${className}`}
+        className={inputClassName}
       />
       <button
         type="button"

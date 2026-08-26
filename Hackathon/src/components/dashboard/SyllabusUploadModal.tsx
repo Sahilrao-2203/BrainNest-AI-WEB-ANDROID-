@@ -486,7 +486,7 @@ CRITICAL REQUIREMENTS FOR COMPLETENESS:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-4xl h-[85vh] bg-surface-container border border-white/10 rounded-lg flex flex-col shadow-2xl overflow-hidden">
+      <div className="w-full max-w-4xl max-h-[calc(100vh-2rem)] bg-surface-container border border-white/10 rounded-lg flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">

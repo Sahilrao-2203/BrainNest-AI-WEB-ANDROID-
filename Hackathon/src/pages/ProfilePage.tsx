@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { AppShell } from '../components/layout/AppShell';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
 import { ProfileStats } from '../components/profile/ProfileStats';
-import { LearningPreferencesSection } from '../components/profile/LearningPreferencesSection';
 import { AIPreferencesSection } from '../components/profile/AIPreferencesSection';
-import { AchievementsSection } from '../components/profile/AchievementsSection';
+import { AcademicIdentity } from '../components/profile/AcademicIdentity';
+import { AccountSettings } from '../components/profile/AccountSettings';
+import { SyllabusMastery } from '../components/profile/SyllabusMastery';
 import { EditProfileModal } from '../components/profile/EditProfileModal';
 import { useUserProfile } from '../mock/userProfile';
 
 export const ProfilePage: React.FC = () => {
-  const { profile, preferences, aiSettings, updateProfile, updatePreferences, updateAiSettings } =
-    useUserProfile();
+  const { profile, aiSettings, updateProfile, updateAiSettings } = useUserProfile();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -32,11 +32,6 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
-  const handlePreferenceChange = (updated: Partial<typeof preferences>) => {
-    updatePreferences(updated);
-    showToast('Preferences updated!');
-  };
-
   const handleAiSettingsChange = (updated: Partial<typeof aiSettings>) => {
     updateAiSettings(updated);
     showToast('AI Companion settings updated!');
@@ -52,24 +47,30 @@ export const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      <main className="max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop pt-24 md:pt-12 pb-32 md:pb-16 space-y-12 md:space-y-16">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-32 space-y-8">
+        
         {/* Section 1: Profile Header */}
         <ProfileHeader profile={profile} onEditClick={() => setIsEditModalOpen(true)} />
 
-        {/* Section 2: Learning Stats */}
-        <ProfileStats />
+        {/* Bento Grid layout */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <AcademicIdentity profile={profile} />
+          <ProfileStats />
+          
+          <SyllabusMastery />
+          
+          <div className="md:col-span-4 flex flex-col gap-6">
+            <div className="flex-1">
+              <AccountSettings profile={profile} />
+            </div>
+          </div>
+          
+          {/* AI Preferences spanning full width for bottom row */}
+          <div className="md:col-span-12">
+            <AIPreferencesSection settings={aiSettings} onChange={handleAiSettingsChange} />
+          </div>
+        </div>
 
-        {/* Section 3: Learning Preferences */}
-        <LearningPreferencesSection
-          preferences={preferences}
-          onChange={handlePreferenceChange}
-        />
-
-        {/* Section 4: AI Preferences */}
-        <AIPreferencesSection settings={aiSettings} onChange={handleAiSettingsChange} />
-
-        {/* Section 5: Achievements */}
-        <AchievementsSection />
       </main>
 
       {/* Edit Profile Modal */}

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +26,8 @@ class ApiClient {
       debugPrint('Path: $path');
       debugPrint('Target BaseUrl: $baseUrl');
       debugPrint('Error Details: $error');
-      if (error is SocketException) {
+      final errStr = error.toString();
+      if (errStr.contains('SocketException') || errStr.contains('Connection refused') || errStr.contains('NetworkUnreachable')) {
         debugPrint('Diagnosis: Connection refused, wrong IP/port, or firewall block.');
         debugPrint('Checklist:');
         debugPrint('1. Is Hackathon Express server running on the PC?');
@@ -36,7 +36,7 @@ class ApiClient {
         debugPrint('4. Windows Firewall inbound rule configured for port?');
       } else if (error is TimeoutException) {
         debugPrint('Diagnosis: Connection timed out. Network latency or packet loss.');
-      } else if (error is HttpException) {
+      } else if (errStr.contains('HttpException')) {
         debugPrint('Diagnosis: Invalid HTTP protocol/host format.');
       }
       debugPrint('---------------------------------');
@@ -63,19 +63,38 @@ class ApiClient {
     Map<String, dynamic> body, {
     Duration timeout = const Duration(seconds: 15),
   }) async {
+    final startTime = DateTime.now();
     try {
       final token = await SecureStorage.getToken();
       final url = Uri.parse('$baseUrl$path');
-      if (kDebugMode) {
-        debugPrint('[ApiClient] POST request to $url (timeout: $timeout)');
-      }
+      
       final response = await http.post(
         url,
         headers: _getHeaders(token),
         body: jsonEncode(body),
       ).timeout(timeout);
+      
+      if (kDebugMode) {
+        final duration = DateTime.now().difference(startTime).inMilliseconds / 1000.0;
+        debugPrint('\n[BrainNest API]');
+        debugPrint('Request URL: $url');
+        debugPrint('Endpoint: $path');
+        debugPrint('HTTP status: ${response.statusCode}');
+        debugPrint('Request duration: ${duration}s');
+        debugPrint('Response status: ${response.reasonPhrase}');
+        debugPrint('------------------------\n');
+      }
       return response;
     } catch (e) {
+      if (kDebugMode) {
+        final duration = DateTime.now().difference(startTime).inMilliseconds / 1000.0;
+        debugPrint('\n[BrainNest API]');
+        debugPrint('Endpoint: $path');
+        debugPrint('HTTP status: FAILED');
+        debugPrint('Request duration: ${duration}s');
+        debugPrint('Response status: ERROR - $e');
+        debugPrint('------------------------\n');
+      }
       _logDiagnostics(e, path);
       rethrow;
     }

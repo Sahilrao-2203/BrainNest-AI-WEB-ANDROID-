@@ -37,7 +37,7 @@ export const PdfViewerModal: React.FC<PdfViewerModalProps> = ({
       aria-label={`PDF Viewer for ${fileName}`}
     >
       <div
-        className="glass-panel p-4 md:p-5 rounded-2xl border border-white/15 bg-surface-container-high/95 max-w-5xl w-full max-h-[88vh] flex flex-col shadow-2xl relative text-on-surface"
+        className="glass-panel p-4 md:p-5 rounded-2xl border border-white/15 bg-surface-container-high/95 max-w-5xl w-full max-h-[calc(100vh-2rem)] flex flex-col shadow-2xl relative text-on-surface"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

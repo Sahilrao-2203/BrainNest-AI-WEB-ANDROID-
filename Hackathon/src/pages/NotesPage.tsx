@@ -420,15 +420,15 @@ export const NotesPage: React.FC = () => {
           <div className="flex items-center gap-2.5 flex-wrap">
             <button
               onClick={() => setIsAiModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary-container to-secondary-container text-on-secondary-container hover:opacity-90 font-label-sm text-xs md:text-sm font-semibold flex items-center gap-2 transition-all active:scale-95 shadow-[0_0_15px_rgba(0,86,208,0.25)] border border-white/10"
+              className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#172a88] to-[#19c7b5] text-white hover:opacity-95 font-label-sm text-xs md:text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-[0_4px_12px_rgba(25,199,181,0.2)] hover:shadow-[0_4px_16px_rgba(25,199,181,0.3)] border border-white/10 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#19c7b5]/50 shrink-0"
             >
-              <span className="material-symbols-outlined text-base">auto_awesome</span>
-              <span>AI Generate Note</span>
+              <span className="material-symbols-outlined text-base text-white">auto_awesome</span>
+              <span className="text-white">AI Generate Note</span>
             </button>
 
             <button
               onClick={() => handleCreateNewNote()}
-              className="px-4 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/90 font-label-sm text-xs md:text-sm font-semibold flex items-center gap-1.5 transition-all active:scale-95 shadow-md"
+              className="px-5 py-2.5 rounded-full bg-primary text-on-primary hover:bg-primary/90 font-label-sm text-xs md:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all active:scale-95 shadow-md whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
             >
               <span className="material-symbols-outlined text-base">add</span>
               <span>New Note</span>
@@ -887,17 +887,17 @@ export const NotesPage: React.FC = () => {
                 <p className="font-body-md text-sm text-on-surface-variant max-w-md mb-6 leading-relaxed">
                   Choose a note from the sidebar or click below to generate an AI study note on any topic.
                 </p>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   <button
                     onClick={() => setIsAiModalOpen(true)}
-                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-primary-container to-secondary-container text-on-secondary-container font-semibold text-sm flex items-center gap-2 shadow-md border border-white/10"
+                    className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#172a88] to-[#19c7b5] text-white hover:opacity-95 font-semibold text-xs md:text-sm flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(25,199,181,0.2)] border border-white/10 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#19c7b5]/50 shrink-0"
                   >
-                    <span className="material-symbols-outlined text-base">auto_awesome</span>
-                    <span>AI Generate Note</span>
+                    <span className="material-symbols-outlined text-base text-white">auto_awesome</span>
+                    <span className="text-white">AI Generate Note</span>
                   </button>
                   <button
                     onClick={() => handleCreateNewNote()}
-                    className="px-4 py-2 rounded-xl bg-primary text-on-primary font-semibold text-sm flex items-center gap-1.5 shadow-md"
+                    className="px-5 py-2.5 rounded-full bg-primary text-on-primary font-semibold text-xs md:text-sm flex items-center justify-center gap-1.5 shadow-md whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary/50 shrink-0"
                   >
                     <span className="material-symbols-outlined text-base">add</span>
                     <span>Blank Note</span>

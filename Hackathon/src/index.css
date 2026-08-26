@@ -91,6 +91,13 @@
     --on-error-container: 255 218 214;
   }
 
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100%;
+    min-height: 100vh;
+  }
   html {
     scroll-behavior: smooth;
     margin: 0;
@@ -101,11 +108,7 @@
     background: rgb(var(--background));
     color: rgb(var(--text-primary));
     position: relative;
-    min-height: 100vh;
     transition: background-color 0.2s ease, color 0.2s ease;
-  }
-  #root {
-    min-height: 100vh;
   }
 }
 

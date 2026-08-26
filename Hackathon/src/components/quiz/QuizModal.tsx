@@ -79,9 +79,9 @@ export const QuizModal: React.FC<QuizModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md animate-fade-in">
-      <GlassCard className="w-full max-w-3xl max-h-[90vh] flex flex-col p-6 relative overflow-hidden border border-white/20 shadow-2xl">
+      <GlassCard className="w-full max-w-3xl max-h-[calc(100vh-2rem)] flex flex-col p-4 md:p-6 relative overflow-hidden border border-white/20 shadow-2xl">
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+        <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4 shrink-0">
           <div>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 font-medium">
               {subjectCode}

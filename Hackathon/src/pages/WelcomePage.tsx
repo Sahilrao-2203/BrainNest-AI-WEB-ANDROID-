@@ -53,13 +53,13 @@ export const WelcomePage: React.FC = () => {
   };
 
   return (
-    <div className="bg-surface dark:bg-[#0F1115] text-on-surface min-h-screen flex items-center justify-center font-body-md overflow-hidden relative w-full">
+    <div className="bg-surface dark:bg-[#0F1115] text-on-surface min-h-screen flex items-center justify-center font-body-md lg:overflow-hidden relative w-full">
       {/* Ambient Background Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-secondary-container opacity-20 blur-3xl z-0 pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-primary-container opacity-10 blur-3xl z-0 pointer-events-none"></div>
       
-      <div className="container mx-auto px-4 lg:px-12 z-10 flex h-screen lg:h-[80vh] max-w-[1200px] items-center justify-center w-full">
-        <div className="glass-card w-full max-w-5xl rounded-xl overflow-hidden flex flex-col lg:flex-row shadow-2xl border border-glass-border">
+      <div className="container mx-auto px-4 lg:px-12 z-10 flex min-h-screen lg:min-h-0 lg:h-[80vh] py-6 lg:py-0 max-w-[1200px] items-center justify-center w-full">
+        <div className="glass-card w-full max-w-5xl rounded-xl overflow-hidden flex flex-col lg:flex-row shadow-2xl border border-glass-border my-4 lg:my-0">
           
           {/* Visual / Branding Side (Hidden on Mobile) */}
           <div className="hidden lg:flex lg:w-1/2 lg:min-w-0 lg:shrink-0 relative bg-surface-variant flex-col justify-between p-10 border-r border-glass-border">
@@ -178,7 +178,7 @@ export const WelcomePage: React.FC = () => {
                     required 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 py-2 bg-surface dark:bg-[#0F1115] border border-outline-variant rounded-lg text-on-surface placeholder-outline focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all font-body-md text-sm"
                   />
                 </div>
               </div>
@@ -231,20 +231,20 @@ export const WelcomePage: React.FC = () => {
               )}
 
               {!isRegisterMode && (
-                <div className="flex items-center justify-between mt-2">
+                <div className="flex flex-wrap items-center justify-between gap-3 mt-3">
                   <div className="flex items-center">
                     <input 
-                      className="h-4 w-4 text-secondary focus:ring-secondary border-outline-variant rounded bg-surface dark:bg-[#0F1115]" 
+                      className="h-4 w-4 text-secondary focus:ring-secondary border-outline-variant rounded bg-surface dark:bg-[#0F1115] cursor-pointer" 
                       id="remember-me" 
                       name="remember-me" 
                       type="checkbox"
                     />
-                    <label className="ml-2 block font-label-sm text-xs text-on-surface-variant cursor-pointer" htmlFor="remember-me">
+                    <label className="ml-2 block font-label-md text-xs text-on-surface-variant cursor-pointer select-none" htmlFor="remember-me">
                       Remember Me
                     </label>
                   </div>
                   <div className="text-xs">
-                    <a className="font-label-sm font-semibold text-secondary hover:underline transition-colors" href="#forgot" onClick={(e) => e.preventDefault()}>
+                    <a className="font-label-md font-semibold text-secondary hover:underline transition-colors" href="#forgot" onClick={(e) => e.preventDefault()}>
                       Forgot Password?
                     </a>
                   </div>

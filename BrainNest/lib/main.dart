@@ -13,10 +13,13 @@ import 'package:brainnest/config/api_config.dart';
 import 'package:brainnest/screens/login_screen.dart';
 import 'package:brainnest/screens/main_layout.dart';
 
+// Global navigator key so AuthGate can replace the stack from anywhere
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ApiConfig.loadConfig();
-  
+
   runApp(
     MultiProvider(
       providers: [
@@ -39,10 +42,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
-
     return MaterialApp(
       title: 'BrainNest',
+      navigatorKey: navigatorKey,
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme.copyWith(
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -67,16 +70,34 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: auth.isLoading
-          ? const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          : auth.isAuthenticated
-              ? const MainLayout()
-              : const LoginScreen(),
+      routes: {
+        '/login': (_) => const LoginScreen(),
+        '/home': (_) => const MainLayout(),
+      },
+      // AuthGate is the single entry point. It watches auth state and
+      // replaces the full Navigator stack whenever auth changes.
+      home: const AuthGate(),
     );
   }
 }
 
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+
+    if (auth.isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (auth.isAuthenticated) {
+      return const MainLayout();
+    }
+
+    return const LoginScreen();
+  }
+}

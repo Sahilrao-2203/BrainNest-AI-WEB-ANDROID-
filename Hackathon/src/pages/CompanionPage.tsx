@@ -612,7 +612,7 @@ export const CompanionPage: React.FC = () => {
       />
 
       {/* Side-by-Side Flex Layout Container below top App Bar */}
-      <div className="flex w-full h-[calc(100vh-4rem)] md:h-screen mt-16 md:mt-0 overflow-hidden relative bg-surface">
+      <div className="flex w-full h-[calc(100vh-9rem)] md:h-screen mt-16 md:mt-0 overflow-hidden relative bg-surface">
         {/* ChatGPT-Style Chat History Sidebar */}
         <ChatHistorySidebar
           isOpen={isSidebarOpen}
@@ -626,9 +626,9 @@ export const CompanionPage: React.FC = () => {
         {/* Right-Side Main General Companion Column */}
         <div className="flex-1 min-w-0 flex flex-col h-full relative overflow-hidden">
           {/* Header Bar */}
-          <header className="w-full shrink-0 z-30 bg-surface-container/90 backdrop-blur-2xl border-b border-white/10 py-3.5 px-4 md:px-6">
+          <header className="w-full shrink-0 z-30 bg-surface border-b border-white/10 py-3 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <button
                   type="button"
                   onClick={() => setIsSidebarOpen((prev) => !prev)}
@@ -638,19 +638,13 @@ export const CompanionPage: React.FC = () => {
                   <span className="material-symbols-outlined text-xl">history</span>
                 </button>
 
-                <div className="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center shrink-0 shadow-md">
-                  <span className="material-symbols-outlined text-primary text-lg">smart_toy</span>
+                <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-primary text-xl">psychology</span>
                 </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-on-surface">AI Study Companion</h2>
-                    <span className="px-2 py-0.5 rounded-full bg-primary-container/40 text-primary text-[10px] font-mono uppercase font-bold tracking-wider">
-                      Standalone Assistant
-                    </span>
-                  </div>
-                  <span className="text-xs text-on-surface-variant">
-                    Ask any question about MAKAUT B.Tech CSE, programming, science, or academics
-                  </span>
+                <div className="min-w-0">
+                  <h2 className="text-sm md:text-base font-bold text-on-surface whitespace-nowrap truncate">
+                    AI Study Companion
+                  </h2>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
@@ -680,9 +674,9 @@ export const CompanionPage: React.FC = () => {
                       }`}
                   >
                     {isAI ? (
-                      <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0 mt-1 shadow-[0_0_15px_rgba(185,199,228,0.2)]">
-                        <span className="material-symbols-outlined text-primary text-sm">
-                          smart_toy
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
+                        <span className="material-symbols-outlined text-primary text-base">
+                          psychology
                         </span>
                       </div>
                     ) : (
@@ -696,7 +690,7 @@ export const CompanionPage: React.FC = () => {
 
                     <div className={`flex flex-col gap-1 ${isAI ? '' : 'items-end'}`}>
                       <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest text-[10px]">
-                        {msg.senderName}
+                        {isAI ? 'AI STUDY COMPANION' : msg.senderName}
                       </span>
                       <div
                         className={`p-4 md:p-5 text-on-surface ${isAI
@@ -923,9 +917,9 @@ export const CompanionPage: React.FC = () => {
 
               {/* Thinking / File Processing Indicator */}
               {(isThinking || isProcessingFile) && (
-                <div className="flex gap-4 max-w-[85%] self-start items-center">
-                  <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center shrink-0">
-                    <span className="material-symbols-outlined text-primary text-sm animate-spin">
+                <div className="flex gap-4 max-w-[85%] self-start items-center animate-pulse">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-primary text-base animate-spin">
                       sync
                     </span>
                   </div>

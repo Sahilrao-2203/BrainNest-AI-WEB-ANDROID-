@@ -38,10 +38,6 @@ export const DashboardPage: React.FC = () => {
   }, []);
 
   const hasCustom = curriculumService.hasCustomSyllabus();
-  const syllabus = curriculumService.getCustomSyllabus();
-  const courseStr = hasCustom && syllabus ? syllabus.course : (profile?.course || 'B.Tech');
-  const branchStr = hasCustom && syllabus ? (syllabus.branch.includes('Computer Science') ? 'CSE' : syllabus.branch) : (profile?.branch ? (profile.branch.includes('Computer Science') ? 'CSE' : profile.branch) : 'CSE');
-  const yearStr = hasCustom && syllabus ? syllabus.year : (profile?.year || '1st Year');
   const hasCurriculumData = hasCustom;
 
   console.log(`[DASHBOARD] hasCustom: ${hasCustom}`);
@@ -142,12 +138,9 @@ export const DashboardPage: React.FC = () => {
       <div className="pt-24 md:pt-12 pb-32 px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto">
         <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-outline-variant/30 pb-6">
           <div>
-            <h1 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">
+            <h1 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">
               Welcome back, {profile?.name || 'Student'}.
             </h1>
-            <p className="text-on-surface-variant">
-              {courseStr} {branchStr} {yearStr} • {hasCustom ? 'Uploaded Syllabus' : 'No Syllabus'} & Deadline-Aware Daily Overview
-            </p>
           </div>
 
           <div className="flex items-center gap-4 flex-wrap">

@@ -61,9 +61,9 @@ export const MoodCheckInModal: React.FC<MoodCheckInModalProps> = ({
       aria-modal="true"
       aria-labelledby="mood-modal-title"
     >
-      <div className="bg-surface-container rounded-lg w-full max-w-xl border border-white/15 shadow-2xl overflow-hidden transform transition-all">
+      <div className="bg-surface-container rounded-lg w-full max-w-xl border border-white/15 shadow-2xl overflow-hidden transform transition-all max-h-[calc(100vh-2rem)] flex flex-col">
         {/* Header */}
-        <div className="p-6 border-b border-white/10 flex justify-between items-start">
+        <div className="p-6 border-b border-white/10 flex justify-between items-start shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="font-label-sm text-xs px-2.5 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 font-semibold">
@@ -98,7 +98,7 @@ export const MoodCheckInModal: React.FC<MoodCheckInModalProps> = ({
         {/* Body */}
         {step === 1 ? (
           /* STEP 1: Mood Options */
-          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto">
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1 overflow-y-auto">
             {MOOD_OPTIONS.map((opt) => {
               const isSelected = selectedMood === opt.id;
               return (
@@ -133,7 +133,7 @@ export const MoodCheckInModal: React.FC<MoodCheckInModalProps> = ({
           </div>
         ) : (
           /* STEP 2: Subject Selection */
-          <div className="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+          <div className="p-6 space-y-3 flex-1 overflow-y-auto">
             {availableSubjects.map((subj) => {
               const isSelected = selectedSubject === subj.code;
               return (
@@ -174,7 +174,7 @@ export const MoodCheckInModal: React.FC<MoodCheckInModalProps> = ({
         )}
 
         {/* Footer */}
-        <div className="p-6 border-t border-white/10 bg-surface-container-high/50 flex items-center justify-between gap-3">
+        <div className="p-6 border-t border-white/10 bg-surface-container-high/50 flex items-center justify-between gap-3 shrink-0">
           <span className="font-label-sm text-xs text-on-surface-variant/70">
             {step === 1 ? 'Resets daily' : 'Strict topic boundary enforced'}
           </span>

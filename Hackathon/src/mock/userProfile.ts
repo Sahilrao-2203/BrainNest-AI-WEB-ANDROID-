@@ -17,6 +17,7 @@ export interface UserProfile {
   phoneNumber?: string;
   dateOfBirth?: string;
   gender?: string;
+  email?: string;
 }
 
 export interface LearningPreferences {

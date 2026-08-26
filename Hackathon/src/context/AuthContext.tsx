@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import type { UserProfile } from '../mock/userProfile';
 import { syncProfileWithServer, setProfileStateFromServer, resetUserProfile, subscribeUserProfile, getCurrentProfile } from '../mock/userProfile';
 import { moodService } from '../services/moodService';
@@ -27,13 +27,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const fetchAuthCounter = useRef(0);
 
   const refreshAuth = async () => {
+    const currentFetchId = ++fetchAuthCounter.current;
     setIsLoading(true);
     try {
       const res = await fetch('/api/auth/me', {
         credentials: 'include',
       });
+      
+      // If a newer login/register/logout/refresh action started while we were fetching, ignore this stale response.
+      if (currentFetchId !== fetchAuthCounter.current) return;
+
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.authenticated && data.profile) {
@@ -54,12 +60,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resetUserProfile();
       }
     } catch (e) {
+      if (currentFetchId !== fetchAuthCounter.current) return;
       console.warn('[AuthContext] Auth check failed:', e);
       setUser(null);
       setIsAuthenticated(false);
       resetUserProfile();
     } finally {
-      setIsLoading(false);
+      if (currentFetchId === fetchAuthCounter.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -75,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
+    fetchAuthCounter.current++; // Invalidate any pending refreshAuth calls
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -106,6 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     course?: string;
     branch?: string;
   }) => {
+    fetchAuthCounter.current++; // Invalidate any pending refreshAuth calls
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
@@ -130,6 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
+    fetchAuthCounter.current++; // Invalidate any pending refreshAuth calls
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',

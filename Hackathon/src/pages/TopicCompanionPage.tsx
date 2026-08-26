@@ -338,12 +338,15 @@ export const TopicCompanionPage: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isAttachmentMenuOpen]);
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollToBottomInstant = () => {
     setTimeout(() => {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: 'auto',
-      });
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo({
+          top: scrollContainerRef.current.scrollHeight,
+          behavior: 'auto',
+        });
+      }
     }, 50);
   };
 
@@ -676,7 +679,7 @@ Requirements:
       />
 
       {/* Side-by-Side Flex Layout Container below top App Bar */}
-      <div className="flex w-full h-[calc(100vh-4rem)] md:h-screen mt-16 md:mt-0 overflow-hidden relative bg-surface">
+      <div className="flex w-full h-[calc(100vh-9rem)] md:h-screen mt-16 md:mt-0 overflow-hidden relative bg-surface">
         {/* ChatGPT-Style Chat History Sidebar */}
         <ChatHistorySidebar
           isOpen={isSidebarOpen}
@@ -685,15 +688,19 @@ Requirements:
           onSelectConversation={handleSelectConversation}
           onNewChat={handleNewChat}
           currentMode="topic"
-          currentTopicId={topicId}
+      currentTopicId={topicId}
         />
 
         {/* Right-Side Main Topic Companion Column */}
-        <div className="flex-1 min-w-0 flex flex-col h-full relative overflow-hidden">
+        <div 
+          ref={scrollContainerRef}
+          className="flex-1 min-w-0 flex flex-col h-full relative overflow-y-auto scrollbar-thin"
+        >
           {/* Topic Header Bar */}
-          <header className="w-full shrink-0 z-30 bg-surface-container/90 backdrop-blur-2xl border-b border-white/10 py-3.5 px-4 md:px-6">
-            <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
+          <header className="w-full shrink-0 z-30 bg-surface-container/90 backdrop-blur-2xl border-b border-white/10 py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8 min-w-0 max-w-full">
+            <div className="max-w-4xl mx-auto flex flex-col gap-4">
+              {/* TOP: Breadcrumb/Category info and mobile sidebar toggle */}
+              <div className="flex items-center gap-3 w-full min-w-0">
                 <button
                   type="button"
                   onClick={() => setIsSidebarOpen((prev) => !prev)}
@@ -703,31 +710,39 @@ Requirements:
                   <span className="material-symbols-outlined text-xl">history</span>
                 </button>
 
-                <div>
-                  <div className="flex items-center gap-2 text-xs text-primary font-medium">
-                    <span className="material-symbols-outlined text-sm">auto_stories</span>
-                    <span className="font-semibold uppercase tracking-wider text-[11px]">Topic Companion</span>
-                    <span className="text-on-surface-variant">•</span>
-                    <span className="font-mono text-on-surface-variant">{topicSession?.subjectCode}</span>
-                    <span className="text-on-surface-variant">•</span>
-                    <span className="text-on-surface-variant">{topicSession?.subjectName}</span>
-                  </div>
-                  <h2 className="text-lg md:text-xl font-bold text-on-surface truncate mt-0.5">
-                    {topicSession?.topicTitle}
-                  </h2>
-                  <div className="text-xs text-on-surface-variant/80 mt-0.5 flex items-center gap-2">
-                    <span>{topicSession?.module}</span>
-                    <span>•</span>
-                    <span>Estimated: {topicSession?.duration}</span>
-                  </div>
+                <div className="flex flex-wrap items-center gap-1.5 text-xs text-primary font-medium max-w-full min-w-0">
+                  <span className="material-symbols-outlined text-sm shrink-0">auto_stories</span>
+                  <span className="font-semibold uppercase tracking-wider text-[11px] shrink-0">Topic Companion</span>
+                  <span className="text-on-surface-variant/40 shrink-0">•</span>
+                  <span className="font-mono text-on-surface-variant shrink-0">{topicSession?.subjectCode}</span>
+                  <span className="text-on-surface-variant/40 shrink-0">•</span>
+                  <span className="text-on-surface-variant/80 break-words">{topicSession?.subjectName}</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
+              {/* THEN: Responsive Topic Title */}
+              <div className="min-w-0 max-w-full">
+                <h2 
+                  className="text-base sm:text-lg md:text-xl xl:text-2xl font-semibold text-on-surface leading-tight break-words whitespace-normal min-w-0 max-w-full"
+                  style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+                >
+                  {topicSession?.topicTitle}
+                </h2>
+              </div>
+
+              {/* THEN: Metadata information */}
+              <div className="text-xs text-on-surface-variant/80 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 flex-wrap min-w-0 max-w-full">
+                <span>{topicSession?.module}</span>
+                <span className="hidden sm:inline text-on-surface-variant/40">•</span>
+                <span>Estimated: {topicSession?.duration}</span>
+              </div>
+
+              {/* THEN: Action buttons at the bottom */}
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2.5 mt-1 w-full justify-start">
                 <button
                   type="button"
                   onClick={handleBackToDailyPlan}
-                  className="px-3.5 py-1.5 rounded-xl bg-surface-variant border border-white/10 hover:bg-surface-container-highest text-on-surface text-xs font-semibold flex items-center gap-1 transition-colors shrink-0"
+                  className="px-3.5 py-1.5 rounded-xl bg-surface-variant border border-white/10 hover:bg-surface-container-highest text-on-surface text-xs font-semibold flex items-center gap-1.5 transition-colors shrink-0 w-full sm:w-auto justify-center"
                 >
                   <span className="material-symbols-outlined text-sm">arrow_back</span>
                   <span>Back to Dashboard</span>
@@ -735,7 +750,7 @@ Requirements:
                 <button
                   type="button"
                   onClick={handleMarkComplete}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all shrink-0 w-full sm:w-auto justify-center ${
                     topicSession?.completed
                       ? 'bg-tertiary/20 text-tertiary border border-tertiary/30'
                       : 'bg-tertiary text-on-tertiary hover:bg-tertiary/90 shadow-md'
@@ -751,7 +766,7 @@ Requirements:
           </header>
 
           {/* Main Chat Messages Scroll Area */}
-          <main className="flex-1 min-h-0 overflow-y-auto px-4 md:px-6 py-6 scrollbar-thin">
+          <main className="flex-grow shrink-0 px-4 md:px-6 py-6">
             <div className="max-w-4xl mx-auto flex flex-col gap-6">
               {messages.map((msg) => {
                 const isAI = msg.sender === 'ai';
@@ -765,9 +780,9 @@ Requirements:
                     }`}
                   >
                     {isAI ? (
-                      <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0 mt-1 shadow-[0_0_15px_rgba(185,199,228,0.2)]">
-                        <span className="material-symbols-outlined text-primary text-sm">
-                          smart_toy
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
+                        <span className="material-symbols-outlined text-primary text-base">
+                          psychology
                         </span>
                       </div>
                     ) : (
@@ -784,7 +799,7 @@ Requirements:
                         style={{ fontFamily: 'Geist' }}
                         className="text-[10px] uppercase tracking-widest text-on-surface-variant/80 font-semibold"
                       >
-                        {isAI ? 'AI ASSISTANT' : msg.senderName}
+                        {isAI ? 'AI STUDY COMPANION' : msg.senderName}
                       </span>
                       <div
                         className={`p-4 md:p-5 text-on-surface ${
@@ -839,8 +854,8 @@ Requirements:
 
               {isThinking && (
                 <div className="flex gap-4 max-w-[85%] self-start animate-pulse">
-                  <div className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="material-symbols-outlined text-primary text-sm animate-spin">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="material-symbols-outlined text-primary text-base animate-spin">
                       sync
                     </span>
                   </div>
@@ -853,7 +868,7 @@ Requirements:
           </main>
 
           {/* Bottom Composer Bar (scoped inside right column) */}
-          <footer className="w-full shrink-0 z-30 bg-surface/90 backdrop-blur-2xl border-t border-white/10 px-4 md:px-6 py-3">
+          <footer className="w-full shrink-0 z-30 bg-surface/90 backdrop-blur-2xl border-t border-white/10 px-4 md:px-6 py-3 sticky bottom-0">
             <div className="max-w-4xl mx-auto flex flex-col gap-3">
               {/* Quick Action Chips tailored to topic */}
               <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">

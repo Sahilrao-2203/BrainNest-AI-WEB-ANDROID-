@@ -66,15 +66,18 @@ router.post('/ai/chat', optionalAuth, async (req, res) => {
     ? systemInstruction
     : `${serverDateContext}\n\n${systemInstruction || ''}`;
 
+  console.log('\n[AI Analysis]');
+  console.log('Started: ' + new Date().toISOString());
+  console.log('Backend received request');
+
   const startTime = Date.now();
-  console.log('[Server AI Route] Gemini started');
 
   const aiClient = new GoogleGenAI({ apiKey });
   let lastError = null;
 
   for (const modelName of ALL_CANDIDATE_MODELS) {
     try {
-      console.log(`[Server AI Proxy] Trying model: ${modelName}`);
+      console.log('AI request started (model: ' + modelName + ')');
 
       const response = await aiClient.models.generateContent({
         model: modelName,
@@ -86,8 +89,9 @@ router.post('/ai/chat', optionalAuth, async (req, res) => {
 
       if (response && response.text) {
         const duration = ((Date.now() - startTime) / 1000.0).toFixed(2);
-        console.log(`[Server AI Route] Gemini completed in ${duration}s`);
-        console.log('[Server AI Route] AI request completed successfully');
+        console.log('AI request completed');
+        console.log('Total duration: ' + duration + 's');
+        console.log('------------------------\n');
         return res.json({
           success: true,
           model: modelName,
@@ -101,8 +105,9 @@ router.post('/ai/chat', optionalAuth, async (req, res) => {
   }
 
   const duration = ((Date.now() - startTime) / 1000.0).toFixed(2);
-  console.log(`[Server AI Route] Gemini failed after ${duration}s: ${lastError ? lastError.message || lastError : 'Unknown error'}`);
-  console.log('[Server AI Route] AI request completed with failure');
+  console.log('AI request failed after ' + duration + 's: ' + (lastError ? lastError.message || lastError : 'Unknown error'));
+  console.log('Total duration: ' + duration + 's');
+  console.log('------------------------\n');
 
   res.status(503).json({
     success: false,

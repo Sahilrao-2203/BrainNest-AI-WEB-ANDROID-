@@ -81,16 +81,15 @@ class CurriculumProvider extends ChangeNotifier {
       } catch (_) {}
     }
 
-    // 3. Fallback to standard seeded subjects & topics matching user profile
-    _applyStandardCurriculum(profile);
+    // 3. Set to empty as no custom syllabus exists
+    _clearCurriculum();
     _isLoading = false;
     notifyListeners();
   }
 
-  void _applyStandardCurriculum(Map<String, dynamic>? profile) {
-    final semNum = _extractSemesterNum(profile?['semester']);
-    _subjects = staticSubjects.where((s) => s.semester == semNum).toList();
-    _topics = staticTopics.where((t) => t.semester == semNum).toList();
+  void _clearCurriculum() {
+    _subjects = [];
+    _topics = [];
     _customSyllabus = null;
   }
 
@@ -371,15 +370,30 @@ CRITICAL RULES:
       }
       
       // If we failed and cannot retry, set error message
-      if (statusCode != null) {
+      if (requestError != null) {
+        if (requestError is TimeoutException) {
+          _errorMessage = 'Syllabus analysis is taking longer than expected. Please try again.';
+        } else {
+          final errStr = requestError.toString().toLowerCase();
+          if (errStr.contains('socketexception') || 
+              errStr.contains('connection reset') || 
+              errStr.contains('handshake failed') ||
+              errStr.contains('connection refused') ||
+              errStr.contains('network is unreachable')) {
+            _errorMessage = 'Unable to connect to the BrainNest server. Please check that your phone and computer are connected to the same Wi-Fi network.';
+          } else {
+            _errorMessage = 'AI syllabus analysis failed. Please try again.';
+          }
+        }
+      } else if (statusCode != null) {
         try {
           final errBody = jsonDecode(response!.body);
-          _errorMessage = errBody['error'] ?? 'AI Parsing failed.';
+          _errorMessage = errBody['error'] ?? 'BrainNest server returned an error. Please try again.';
         } catch (_) {
-          _errorMessage = 'AI Parsing failed with status code $statusCode.';
+          _errorMessage = 'BrainNest server returned an error. Please try again.';
         }
       } else {
-        _errorMessage = 'Connection timeout or network failure during AI analysis.';
+        _errorMessage = 'AI syllabus analysis failed. Please try again.';
       }
       return null;
     }
@@ -473,7 +487,7 @@ CRITICAL RULES:
     } catch (_) {}
 
     _customSyllabus = null;
-    _applyStandardCurriculum(authProvider.userProfile);
+    _clearCurriculum();
     _isLoading = false;
     notifyListeners();
   }

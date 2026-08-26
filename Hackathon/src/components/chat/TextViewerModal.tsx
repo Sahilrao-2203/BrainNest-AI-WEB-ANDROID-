@@ -40,7 +40,7 @@ export const TextViewerModal: React.FC<TextViewerModalProps> = ({
       aria-label={`Full text content viewer for ${fileName}`}
     >
       <div
-        className="glass-panel p-5 md:p-6 rounded-2xl border border-white/15 bg-surface-container-high/95 max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl relative text-on-surface"
+        className="glass-panel p-5 md:p-6 rounded-2xl border border-white/15 bg-surface-container-high/95 max-w-4xl w-full max-h-[calc(100vh-2rem)] flex flex-col shadow-2xl relative text-on-surface"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -68,7 +68,7 @@ export const TextViewerModal: React.FC<TextViewerModalProps> = ({
 
         {/* Text Content Area */}
         <div className="mt-4 flex-1 overflow-hidden flex flex-col">
-          <pre className="flex-1 font-mono text-xs md:text-sm text-on-surface bg-surface-container-lowest/90 p-4 rounded-xl border border-white/10 overflow-auto whitespace-pre select-text max-h-[65vh] leading-relaxed shadow-inner">
+          <pre className="flex-1 font-mono text-xs md:text-sm text-on-surface bg-surface-container-lowest/90 p-4 rounded-xl border border-white/10 overflow-auto whitespace-pre select-text leading-relaxed shadow-inner">
             <code>{content}</code>
           </pre>
         </div>

@@ -17,8 +17,8 @@ export const AIPreferencesSection: React.FC<AIPreferencesSectionProps> = ({
   }> = [
     {
       key: 'proactiveSuggestions',
-      title: 'Proactive Suggestions',
-      description: 'AI suggests topics based on your performance.',
+      title: 'Gen-Z Mode',
+      description: 'AI uses slang and memes to explain topics.',
     },
     {
       key: 'strictMode',
@@ -33,42 +33,44 @@ export const AIPreferencesSection: React.FC<AIPreferencesSectionProps> = ({
   ];
 
   return (
-    <section>
-      <h3 className="font-headline-md text-headline-md text-on-surface mb-2 flex items-center gap-3">
-        <span className="material-symbols-outlined text-secondary">smart_toy</span>
-        AI Companion Settings
-      </h3>
-      <p className="font-body-sm text-body-sm text-on-surface-variant mb-6">
-        These preferences help your AI Study Companion personalize your learning experience.
-      </p>
-      <div className="bg-surface-container border border-white/10 rounded-xl p-6 space-y-6">
+    <div className="md:col-span-8 bg-gradient-to-br from-primary-900 to-primary-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between text-white relative overflow-hidden h-full">
+      {/* Decorative SVG/Blur */}
+      <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none translate-x-1/4 translate-y-1/4">
+        <span className="material-symbols-outlined text-[200px]">smart_toy</span>
+      </div>
+      
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className="material-symbols-outlined text-accent-400">psychology</span>
+          <h3 className="font-headline-sm font-bold text-white">AI Preferences</h3>
+        </div>
+        <p className="font-body-sm text-primary-100 mb-6 opacity-90 max-w-[80%]">
+          Customize how your AI companion interacts with you.
+        </p>
+      </div>
+      
+      <div className="space-y-4 relative z-10">
         {toggleItems.map((item) => {
           const checked = settings[item.key];
           return (
-            <div key={item.key} className="flex items-center justify-between gap-4">
+            <div key={item.key} className="flex justify-between items-center bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 hover:bg-white/20 transition-colors">
               <div>
-                <div className="font-body-md font-semibold text-on-surface">{item.title}</div>
-                <div className="font-body-sm text-on-surface-variant">{item.description}</div>
+                <div className="font-body-md font-semibold text-white">{item.title}</div>
+                <div className="font-body-sm text-primary-100 opacity-90">{item.description}</div>
               </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={checked}
-                onClick={() => onChange({ [item.key]: !checked })}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  checked ? 'bg-[#00513a]' : 'bg-surface-variant border-white/10'
-                }`}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    checked ? 'translate-x-5 border-[#a6f2cf]' : 'translate-x-0'
-                  }`}
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={checked as boolean}
+                  onChange={(e) => onChange({ [item.key]: e.target.checked })}
                 />
-              </button>
+                <div className="w-11 h-6 bg-primary-700/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-500"></div>
+              </label>
             </div>
           );
         })}
       </div>
-    </section>
+    </div>
   );
 };

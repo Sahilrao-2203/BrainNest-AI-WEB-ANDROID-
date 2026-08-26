@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import type { UserProfile } from '../../mock/userProfile';
-import { DEFAULT_AVATAR_URL, useUserProfile } from '../../mock/userProfile';
+import { useUserProfile } from '../../mock/userProfile';
 import { ProfileAvatar } from './ProfileAvatar';
 
 interface ProfileHeaderProps {
@@ -9,22 +9,10 @@ interface ProfileHeaderProps {
   onAvatarChange?: (avatarUrl: string) => void;
 }
 
-const formatDate = (dateStr?: string) => {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) return dateStr;
-  const day = date.getDate();
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-  return `${day} ${month} ${year}`;
-};
-
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, onEditClick, onAvatarChange }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { updateProfile } = useUserProfile();
   const [statusMessage, setStatusMessage] = useState<{ text: string; isError: boolean } | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
 
   const showStatus = (text: string, isError = false) => {
     setStatusMessage({ text, isError });
@@ -57,7 +45,6 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, onEditCli
       return;
     }
 
-    setIsUploading(true);
     showStatus('Uploading profile photo...');
 
     try {
@@ -72,43 +59,28 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, onEditCli
           }
           showStatus('Upload successful!');
         }
-        setIsUploading(false);
         if (fileInputRef.current) fileInputRef.current.value = '';
       };
       reader.onerror = () => {
         showStatus('Failed to read image file. Please try again.', true);
-        setIsUploading(false);
         if (fileInputRef.current) fileInputRef.current.value = '';
       };
       reader.readAsDataURL(file);
     } catch (err) {
       showStatus('Upload failed. Please try again.', true);
-      setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
-  const handleRemovePhoto = async () => {
-    setIsUploading(true);
-    showStatus('Removing photo...');
-    try {
-      if (onAvatarChange) {
-        onAvatarChange(DEFAULT_AVATAR_URL);
-      } else {
-        await updateProfile({ avatarUrl: DEFAULT_AVATAR_URL });
-      }
-      showStatus('Photo reset to default!');
-    } catch (err) {
-      showStatus('Failed to remove photo.', true);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const isCustomAvatar = profile.avatarUrl && profile.avatarUrl !== DEFAULT_AVATAR_URL;
-
   return (
-    <section className="flex flex-col items-center text-center space-y-6">
+    <div className="relative w-full rounded-[32px] bg-gradient-to-br from-primary-900 to-primary-800 p-8 md:p-12 overflow-hidden shadow-2xl shadow-primary-900/20 isolate text-white">
+      {/* Decorative Blur Orbs */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-96 h-96 bg-accent-500/30 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-80 h-80 bg-primary-600/40 rounded-full blur-[80px] pointer-events-none"></div>
+      
+      {/* Glassmorphism Pattern Overlay */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')] opacity-50 pointer-events-none"></div>
+
       <input
         ref={fileInputRef}
         type="file"
@@ -117,122 +89,93 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({ profile, onEditCli
         onChange={handleFileChange}
       />
 
-      <div className="flex flex-col items-center space-y-3">
-        <div className="relative group">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-primary-fixed/30 bg-surface-container border-white/10 shadow-[0_10px_30px_rgba(185,199,228,0.15)] transition-transform duration-300 group-hover:scale-105">
+      <div className="relative z-10 flex flex-col md:flex-row items-center md:items-end gap-8">
+        {/* Avatar Stack */}
+        <div className="relative group shrink-0">
+          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl relative bg-primary-800">
             <ProfileAvatar
               avatarUrl={profile.avatarUrl}
               name={profile.name}
-              className="w-full h-full"
-              iconSize="text-4xl"
+              className="w-full h-full object-cover"
+              iconSize="text-5xl"
             />
+            {/* Edit overlay on hover */}
+            <div 
+              onClick={handlePencilClick}
+              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-sm"
+            >
+              <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+            </div>
           </div>
-          <button
-            type="button"
-            aria-label="Edit Profile Avatar"
-            title="Change Profile Photo"
-            onClick={handlePencilClick}
-            disabled={isUploading}
-            className="absolute bottom-0 right-0 w-10 h-10 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-lg border-2 border-surface hover:scale-110 hover:bg-primary/90 active:scale-95 transition-all disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined text-sm">
-              {isUploading ? 'sync' : 'edit'}
-            </span>
-          </button>
+          
+          <div className="absolute -bottom-3 -right-3 bg-accent-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border-2 border-primary-900 flex items-center gap-1">
+            <span className="material-symbols-outlined text-[14px]">stars</span>
+            PRO
+          </div>
         </div>
 
-        {isCustomAvatar && (
-          <button
-            type="button"
-            onClick={handleRemovePhoto}
-            disabled={isUploading}
-            className="text-xs text-error hover:text-error/80 hover:underline font-medium flex items-center gap-1 transition-colors"
-          >
-            <span className="material-symbols-outlined text-xs">delete</span>
-            Remove Photo
-          </button>
-        )}
+        {/* Profile Info */}
+        <div className="flex-1 text-center md:text-left space-y-4">
+          <div>
+            <h1 className="font-headline-lg font-black text-4xl tracking-tight mb-2 flex items-center justify-center md:justify-start gap-3">
+              {profile.name}
+              <span className="material-symbols-outlined text-accent-400 text-3xl" title="Verified Scholar">verified</span>
+            </h1>
+            <p className="font-body-lg text-primary-100 text-lg max-w-2xl">
+              {profile.course} | {profile.branch}
+            </p>
+          </div>
 
-        {statusMessage && (
+          {/* Quick Details Chips */}
+          <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-2">
+            {profile.collegeName && (
+              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-sm font-medium border border-white/10">
+                <span className="material-symbols-outlined text-accent-400 text-[18px]">school</span>
+                {profile.collegeName}
+              </div>
+            )}
+            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-sm font-medium border border-white/10">
+              <span className="material-symbols-outlined text-accent-400 text-[18px]">location_on</span>
+              {profile.collegeName ? 'Kolkata, India' : 'Campus Location'}
+            </div>
+            {profile.email && (
+              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-sm font-medium border border-white/10">
+                <span className="material-symbols-outlined text-accent-400 text-[18px]">mail</span>
+                {profile.email}
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* Actions */}
+        <div className="flex flex-col gap-3 w-full md:w-auto">
+          <button 
+            onClick={onEditClick}
+            className="w-full md:w-auto bg-white text-primary-900 hover:bg-primary-50 font-semibold py-3 px-6 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2"
+          >
+            <span className="material-symbols-outlined">edit</span>
+            Edit Profile
+          </button>
+          <button className="w-full md:w-auto bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-medium py-3 px-6 rounded-xl border border-white/10 transition-colors flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined">share</span>
+            Share Profile
+          </button>
+        </div>
+      </div>
+      
+      {statusMessage && (
+        <div className="absolute top-4 right-4 z-50">
           <div
-            className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${
+            className={`text-sm px-4 py-2 rounded-lg font-medium shadow-lg backdrop-blur-md border ${
               statusMessage.isError
-                ? 'bg-error-container/50 text-error border border-error/30'
-                : 'bg-primary/20 text-primary border border-primary/30'
+                ? 'bg-error-container/90 text-error border-error/30'
+                : 'bg-green-500/90 text-white border-green-400/30'
             }`}
           >
             {statusMessage.text}
           </div>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <h2 className="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">
-          {profile.name}
-        </h2>
-        <p className="font-body-lg text-body-lg text-on-surface-variant">
-          {profile.branch ? `${profile.branch} • ${profile.course}` : profile.course}
-        </p>
-        {(profile.year || profile.semester) && (
-          <p className="font-body-md text-body-md text-on-surface-variant/80">
-            {profile.year && profile.semester
-              ? `${profile.year} • ${profile.semester}`
-              : profile.year || profile.semester}
-          </p>
-        )}
-        <div className="flex items-center justify-center gap-2 text-on-surface-variant/70 font-label-sm text-label-sm">
-          <span className="material-symbols-outlined text-[16px]">badge</span>
-          <span>ID: {profile.studentId}</span>
         </div>
-        {profile.bio && (
-          <p className="text-body-md text-on-surface/80 max-w-lg mx-auto pt-2 italic">
-            "{profile.bio}"
-          </p>
-        )}
-
-        {(profile.collegeName || profile.universityRollNo || profile.phoneNumber || profile.dateOfBirth || profile.gender) && (
-          <div className="mt-4 pt-4 border-t border-outline-variant/30 max-w-md mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-left text-sm text-on-surface-variant/80 font-body-md bg-surface-container/30 p-4 rounded-xl border border-white/5">
-            {profile.collegeName && (
-              <div className="flex items-center gap-2.5 col-span-1 sm:col-span-2">
-                <span className="material-symbols-outlined text-[18px] text-primary shrink-0">school</span>
-                <span className="font-semibold text-on-surface truncate" title={profile.collegeName}>{profile.collegeName}</span>
-              </div>
-            )}
-            {profile.universityRollNo && (
-              <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-[18px] text-primary shrink-0">pin</span>
-                <span>Roll: <span className="font-semibold text-on-surface">{profile.universityRollNo}</span></span>
-              </div>
-            )}
-            {profile.gender && (
-              <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-[18px] text-primary shrink-0">wc</span>
-                <span>Gender: <span className="font-semibold text-on-surface">{profile.gender}</span></span>
-              </div>
-            )}
-            {profile.phoneNumber && (
-              <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-[18px] text-primary shrink-0">call</span>
-                <span>Phone: <span className="font-semibold text-on-surface">{profile.phoneNumber}</span></span>
-              </div>
-            )}
-            {profile.dateOfBirth && (
-              <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-[18px] text-primary shrink-0">calendar_today</span>
-                <span>DOB: <span className="font-semibold text-on-surface">{formatDate(profile.dateOfBirth)}</span></span>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <button
-        onClick={onEditClick}
-        className="px-6 py-3 bg-primary text-on-primary rounded-lg font-body-md text-body-md font-semibold glow-button active:scale-95 transition-transform flex items-center gap-2"
-      >
-        <span className="material-symbols-outlined">edit_square</span>
-        Edit Profile
-      </button>
-    </section>
+      )}
+    </div>
   );
 };

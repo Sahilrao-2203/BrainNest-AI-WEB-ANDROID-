@@ -43,13 +43,27 @@ const authRateLimiter = rateLimit({
 });
 
 // Dynamic CORS configuration supporting environment variable FRONTEND_ORIGIN
-const allowedOrigins = process.env.FRONTEND_ORIGIN
-  ? [process.env.FRONTEND_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174', 'http://127.0.0.1:5174']
-  : ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174', 'http://127.0.0.1:5174'];
+// Flutter web runs on random localhost ports (e.g. 58272, 60939), so we allow
+// all localhost/127.0.0.1 origins in development. In production set FRONTEND_ORIGIN.
+const allowedOriginFn = (origin, callback) => {
+  if (!origin) {
+    // Allow non-browser requests (native Android app, curl, Postman)
+    return callback(null, true);
+  }
+  const isLocalhost =
+    origin.startsWith('http://localhost:') ||
+    origin.startsWith('http://127.0.0.1:') ||
+    origin.startsWith('http://10.0.2.2:');    // Android emulator
+  const isEnvOrigin = process.env.FRONTEND_ORIGIN && origin === process.env.FRONTEND_ORIGIN;
+  if (isLocalhost || isEnvOrigin) {
+    return callback(null, true);
+  }
+  return callback(new Error(`CORS: origin ${origin} not allowed`));
+};
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: allowedOriginFn,
     credentials: true,
   })
 );
@@ -77,8 +91,8 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(PORT, () => {
-      console.log(`API server running on port ${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`API server running on port ${PORT} (all interfaces — LAN accessible in dev)`);
     });
   } catch (error) {
     console.error('Failed to start server:', error.message);
